@@ -38,12 +38,13 @@ func (jsn *JServerNet) Start() {
 
 			go func() {
 				for {
-					buf := make([]byte, 0, 512)
+					buf := make([]byte, 512)
 					cnt, err := conn.Read(buf)
 					if err != nil {
 						continue
 					}
-					if _, err := conn.Write(buf[:cnt]); err != nil {
+					recv := fmt.Sprintf("hello %s, i am server", string(buf[cnt-1:cnt]))
+					if _, err := conn.Write([]byte(recv)); err != nil {
 						continue
 					}
 				}

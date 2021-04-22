@@ -5,10 +5,14 @@ import (
 	jnet "github.com/zerone/jerry/server"
 )
 
-func main() {
-	fmt.Println("server started")
+func mainn() {
 
-	jServer := jnet.New("jerry")
+	go func() {
+		fmt.Println("server started")
 
-	jServer.Serve()
+		jServer := jnet.New("jerry")
+
+		jServer.Serve()
+	}()
+
 }

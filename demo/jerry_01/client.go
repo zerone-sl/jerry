@@ -8,7 +8,10 @@ import (
 
 func main() {
 
-	conn, err := net.Dial("tcp", "127.0.1:6069")
+	mainn()
+	time.Sleep(time.Second)
+
+	conn, err := net.Dial("tcp", "127.0.0.1:6069")
 	if err != nil {
 		fmt.Println("conn to tcp server err: ", err)
 		return
@@ -17,8 +20,9 @@ func main() {
 	go func() {
 		idx := 0
 		for {
-			msg := []byte(fmt.Sprintf("[client] hello server, i am client %d", idx))
-			conn.Write(msg)
+			msg := fmt.Sprintf("[client] hello server, i am client %d", idx)
+			fmt.Println(msg)
+			conn.Write([]byte(msg))
 
 			idx++
 			time.Sleep(time.Second)

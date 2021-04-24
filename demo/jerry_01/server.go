@@ -12,6 +12,9 @@ func mainn() {
 
 		jServer := jnet.New("jerry")
 
+		router := jnet.NewRouter()
+		jServer.AddRouter(&router)
+
 		jServer.Serve()
 	}()
 

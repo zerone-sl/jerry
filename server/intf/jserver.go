@@ -1,6 +1,6 @@
 package intf
 
-type JServer interface {
+type XServer interface {
 	/**
 
 	 */
@@ -9,4 +9,6 @@ type JServer interface {
 	Serve()
 
 	Stop()
+
+	AddRouter(r *XRouter)
 }

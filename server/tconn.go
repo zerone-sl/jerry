@@ -18,17 +18,17 @@ type TCPXConn struct {
 
 	ExitChan chan bool
 
-	HandleAPI intf.HandleFunc
+	Router intf.XRouter
 }
 
-func NewTCPXConn(connID string, conn *net.TCPConn, handle intf.HandleFunc) *TCPXConn {
+func NewTCPXConn(connID string, conn *net.TCPConn, router intf.XRouter) *TCPXConn {
 	tpcXconn := &TCPXConn{
-		connType:  "tcp4",
-		connID:    connID,
-		conn:      conn,
-		isClosed:  false,
-		ExitChan:  make(chan bool, 1),
-		HandleAPI: handle,
+		connType: "tcp4",
+		connID:   connID,
+		conn:     conn,
+		isClosed: false,
+		ExitChan: make(chan bool, 1),
+		Router:   router,
 	}
 	return tpcXconn
 }
@@ -77,14 +77,17 @@ func CallBack(conn *net.TCPConn, msg []byte, cnt int) error {
 func Read(t *TCPXConn) {
 	for {
 		buf := make([]byte, 512)
-		cnt, err := t.conn.Read(buf)
+		_, err := t.conn.Read(buf)
 		if err != nil {
 			continue
 		}
 
-		if err := t.HandleAPI(t.conn, buf, cnt); err != nil {
-			log.Fatalln(t.connID, "exec handleAPI err: ", err)
-			break
-		}
+		xreq := NewTCPXReq(t, buf)
+
+		go func(r intf.XReq) {
+			t.Router.PreHandle(r)
+			t.Router.Handle(r)
+			t.Router.PostHandle(r)
+		}(xreq)
 	}
 }

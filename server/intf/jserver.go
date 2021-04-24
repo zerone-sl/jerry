@@ -1,4 +1,4 @@
-package jnet
+package intf
 
 type JServer interface {
 	/**

@@ -2,6 +2,7 @@ package jnet
 
 import (
 	"fmt"
+	int2 "github.com/zerone/jerry/server/intf"
 	"log"
 	"net"
 	"sync"
@@ -36,19 +37,8 @@ func (jsn *JServerNet) Start() {
 				continue
 			}
 
-			go func() {
-				for {
-					buf := make([]byte, 512)
-					cnt, err := conn.Read(buf)
-					if err != nil {
-						continue
-					}
-					recv := fmt.Sprintf("hello %s, i am server", string(buf[cnt-1:cnt]))
-					if _, err := conn.Write([]byte(recv)); err != nil {
-						continue
-					}
-				}
-			}()
+			tcpXconn := NewTCPXConn("1", conn, CallBack)
+			go tcpXconn.Do()
 		}
 	}()
 }
@@ -64,6 +54,6 @@ func (jsn *JServerNet) Stop() {
 
 }
 
-func New(name string) JServer {
+func New(name string) int2.JServer {
 	return &JServerNet{Name: name, TCPVer: "tcp4", Ip: "127.0.0.1", Port: 6069}
 }
